@@ -4,23 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0d1019">
-<title>Nightfall — Mafia role dealer</title>
+<title>Nightfall — Mafia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0d1019;
-  --slate:#161b28;
-  --slate-2:#1f2637;
-  --line:#2c3448;
-  --brass:#c9a227;
-  --ember:#b5473a;
-  --bone:#ece5d5;
-  --fog:#8992a8;
-  --teal:#3f8f7b;
-  --azure:#4571a8;
-  --r:14px;
+  --ink:#0d1019;--slate:#161b28;--slate-2:#1f2637;--line:#2c3448;
+  --brass:#c9a227;--ember:#b5473a;--bone:#ece5d5;--fog:#8992a8;
+  --teal:#3f8f7b;--azure:#4571a8;--r:14px;
 }
 *{
   box-sizing:border-box;margin:0;padding:0;
@@ -31,12 +23,9 @@
 input{-webkit-user-select:text;-moz-user-select:text;user-select:text}
 html,body{height:100%}
 body{
-  background:var(--ink);
-  color:var(--bone);
+  background:var(--ink);color:var(--bone);
   font-family:'DM Sans',system-ui,-apple-system,sans-serif;
-  font-size:16px;line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -45,35 +34,52 @@ body::before{
     radial-gradient(90% 60% at 50% 110%, rgba(181,71,58,.08), transparent 60%);
 }
 .wrap{
-  position:relative;z-index:1;
-  max-width:560px;margin:0 auto;
-  padding:calc(28px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
+  position:relative;z-index:1;max-width:600px;margin:0 auto;
+  padding:calc(20px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
   min-height:100%;display:flex;flex-direction:column;
 }
-.screen{display:none;animation:rise .35s cubic-bezier(.2,.8,.3,1)}
-.screen.on{display:block}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-.mast{text-align:center;margin-bottom:26px}
-.mast h1{
-  font-family:'Special Elite',serif;font-weight:400;
-  font-size:clamp(30px,9vw,42px);letter-spacing:.06em;
-  text-transform:uppercase;line-height:1;
+/* brand + tabs */
+.brand{
+  text-align:center;font-family:'Special Elite',serif;
+  font-size:22px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px;
 }
-.mast h1 span{color:var(--brass)}
-.mast p{color:var(--fog);font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-top:10px}
-.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:18px 0 0}
-
-.panel{
-  background:var(--slate);border:1px solid var(--line);
-  border-radius:var(--r);padding:20px;margin-bottom:14px;
+.brand span{color:var(--brass)}
+.tabs{
+  display:flex;gap:4px;padding:4px;margin-bottom:22px;
+  background:var(--slate);border:1px solid var(--line);border-radius:12px;
 }
-.eyebrow{
+.tabs button{
+  flex:1;padding:11px 6px;border:none;border-radius:9px;cursor:pointer;
+  background:transparent;color:var(--fog);
   font-family:'JetBrains Mono',monospace;font-size:11px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--brass);
-  display:block;margin-bottom:14px;
+  letter-spacing:.13em;text-transform:uppercase;
+  transition:background .18s,color .18s;
 }
-.prose{color:var(--fog);font-size:14.5px;line-height:1.65}
+.tabs button:hover{color:var(--bone)}
+.tabs button[aria-selected="true"]{background:var(--slate-2);color:var(--brass)}
+
+.view{display:none;animation:rise .3s cubic-bezier(.2,.8,.3,1)}
+.view.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+h2.head{
+  font-family:'Special Elite',serif;font-weight:400;
+  font-size:clamp(26px,7vw,36px);letter-spacing:.05em;text-transform:uppercase;
+  line-height:1;text-align:center;margin-bottom:6px;
+}
+h2.head span{color:var(--brass)}
+.sub-line{
+  text-align:center;color:var(--fog);font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:22px;
+}
+
+.panel{background:var(--slate);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--brass);display:block;margin-bottom:14px;
+}
+.prose{color:var(--fog);font-size:14.5px;line-height:1.7}
 
 .row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0}
 .row + .row{border-top:1px solid var(--line)}
@@ -88,10 +94,7 @@ body::before{
 }
 .step button:hover:not(:disabled){background:#28304a;border-color:var(--brass)}
 .step button:disabled{opacity:.3;cursor:not-allowed}
-.step .val{
-  font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;
-  min-width:44px;text-align:center;
-}
+.step .val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;min-width:44px;text-align:center}
 
 .tog{
   width:54px;height:31px;border-radius:99px;flex-shrink:0;cursor:pointer;
@@ -107,31 +110,57 @@ body::before{
 
 .btn{
   display:block;width:100%;padding:17px;border-radius:12px;border:none;cursor:pointer;
-  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;
-  letter-spacing:.04em;transition:transform .12s,filter .15s;
+  font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:.04em;
+  transition:transform .12s,filter .15s;
 }
 .btn:active{transform:scale(.985)}
 .btn-primary{background:var(--brass);color:#171203}
-.btn-primary:hover{filter:brightness(1.08)}
+.btn-primary:hover:not(:disabled){filter:brightness(1.08)}
 .btn-primary:disabled{background:var(--slate-2);color:var(--fog);cursor:not-allowed}
 .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--fog);font-weight:500;padding:14px}
 .btn-ghost:hover{border-color:var(--brass);color:var(--bone)}
+.btn-town{background:var(--teal);color:#06120e}
+.btn-mafia{background:var(--ember);color:#1a0705}
 .stack{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
-.warn{
-  color:var(--ember);font-size:13.5px;margin-top:12px;
-  display:none;align-items:flex-start;gap:7px;
+.links{
+  display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:18px;
 }
-.warn.on{display:flex}
+.links button{
+  background:none;border:none;cursor:pointer;color:var(--fog);
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;padding:6px 2px;
+  border-bottom:1px solid transparent;transition:color .15s,border-color .15s;
+}
+.links button:hover{color:var(--brass);border-color:var(--brass)}
 
-.codebox{text-align:center;padding:26px 20px}
+.note{color:var(--ember);font-size:13.5px;margin-top:12px;display:none}
+.note.on{display:block}
+
+.field label{
+  display:block;font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--fog);margin-bottom:8px;
+}
+.field input{
+  width:100%;padding:15px;border-radius:12px;background:var(--ink);
+  border:1px solid var(--line);color:var(--bone);
+  font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;
+  letter-spacing:.1em;text-align:center;
+}
+.field input::placeholder{color:#3d465e}
+.field input:focus{outline:none;border-color:var(--brass)}
+.field + .field{margin-top:14px}
+#in-code{text-transform:uppercase;letter-spacing:.18em}
+
+/* code + lobby */
+.codebox{text-align:center}
 .codebox .code{
   font-family:'JetBrains Mono',monospace;font-weight:700;
-  font-size:clamp(34px,11vw,50px);letter-spacing:.16em;color:var(--brass);
-  word-break:break-all;
+  font-size:clamp(36px,11vw,54px);letter-spacing:.18em;color:var(--brass);line-height:1;
 }
-.codebox .hint{color:var(--fog);font-size:13.5px;margin-top:12px;line-height:1.55}
-.roster{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px}
+.codebox .hint{color:var(--fog);font-size:13px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:16px}
 .chip{
   font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.08em;
   text-transform:uppercase;padding:6px 11px;border-radius:99px;
@@ -139,36 +168,24 @@ body::before{
 }
 .chip b{color:var(--bone);font-weight:700}
 
-.field{margin-bottom:14px}
-.field label{
-  display:block;font-family:'JetBrains Mono',monospace;font-size:11px;
-  letter-spacing:.18em;text-transform:uppercase;color:var(--fog);margin-bottom:8px;
+.count{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--fog);letter-spacing:.14em;text-transform:uppercase}
+.count b{color:var(--brass);font-size:17px}
+.who{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{
+  padding:8px 13px;border-radius:99px;background:var(--slate-2);
+  border:1px solid var(--line);font-size:14px;font-weight:500;
+  animation:pop .3s cubic-bezier(.2,.9,.3,1);
 }
-.field input{
-  width:100%;padding:16px;border-radius:12px;
-  background:var(--ink);border:1px solid var(--line);color:var(--bone);
-  font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
-  letter-spacing:.14em;text-align:center;text-transform:uppercase;
-}
-.field input::placeholder{color:#3d465e;letter-spacing:.14em}
-.field input:focus{outline:none;border-color:var(--brass)}
+.tag.me{border-color:var(--brass);color:var(--brass)}
+.tag.empty{color:#3d465e;font-family:'JetBrains Mono',monospace;font-size:12px}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 
-.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px;margin-top:4px}
-.seat{
-  aspect-ratio:1;border-radius:11px;cursor:pointer;
-  background:var(--slate-2);border:1px solid var(--line);color:var(--bone);
-  font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;
-  transition:background .15s,border-color .15s,color .15s;
-}
-.seat:hover{border-color:var(--brass)}
-.seat.sel{background:var(--brass);border-color:var(--brass);color:#171203}
-
-/* THE CARD */
+/* card */
 .dealt{perspective:1400px;margin-bottom:16px}
 .card{
-  position:relative;width:100%;aspect-ratio:3/4.1;max-height:62vh;
-  border-radius:20px;cursor:pointer;
-  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.9,.3,1);
+  position:relative;width:100%;aspect-ratio:3/4.1;max-height:56vh;
+  border-radius:20px;cursor:pointer;transform-style:preserve-3d;
+  transition:transform .5s cubic-bezier(.3,.9,.3,1);
   border:none;padding:0;background:none;display:block;touch-action:none;
 }
 .card.open{transform:rotateY(180deg)}
@@ -179,241 +196,298 @@ body::before{
   padding:26px;overflow:hidden;
 }
 .back{
-  background:
-    repeating-linear-gradient(45deg,rgba(201,162,39,.05) 0 9px,transparent 9px 18px),
-    var(--slate);
+  background:repeating-linear-gradient(45deg,rgba(201,162,39,.05) 0 9px,transparent 9px 18px),var(--slate);
   border:1px solid var(--line);
 }
-.back .mark{
-  font-family:'Special Elite',serif;font-size:clamp(52px,17vw,76px);
-  color:var(--brass);opacity:.9;line-height:1;
-}
+.back .mark{font-family:'Special Elite',serif;font-size:clamp(52px,16vw,76px);color:var(--brass);opacity:.9;line-height:1}
 .back .instr{
   font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.16em;
   text-transform:uppercase;color:var(--fog);margin-top:22px;text-align:center;line-height:1.9;
 }
-.ring{
-  position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
-  width:74%;height:3px;border-radius:99px;background:var(--line);overflow:hidden;
-}
+.ring{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);width:74%;height:3px;border-radius:99px;background:var(--line);overflow:hidden}
 .ring i{display:block;height:100%;width:0;background:var(--brass);border-radius:99px}
 .card.holding .ring i{width:100%;transition:width .55s linear}
-
-.front{
-  transform:rotateY(180deg);
-  background:var(--bone);color:#1a1712;
-  border:1px solid rgba(0,0,0,.15);
-}
-.front .seatno{
-  position:absolute;top:18px;left:20px;
-  font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;
-  color:rgba(0,0,0,.42);
-}
-.front .glyph{font-size:clamp(56px,18vw,84px);line-height:1;margin-bottom:16px}
+.front{transform:rotateY(180deg);background:var(--bone);color:#1a1712;border:1px solid rgba(0,0,0,.15)}
+.front .glyph{font-size:clamp(52px,16vw,80px);line-height:1;margin-bottom:16px}
 .front .role{
-  font-family:'Special Elite',serif;font-size:clamp(30px,9.5vw,44px);
+  font-family:'Special Elite',serif;font-size:clamp(28px,8.5vw,42px);
   letter-spacing:.05em;text-transform:uppercase;line-height:1;text-align:center;
 }
 .front .team{
   font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.2em;
   text-transform:uppercase;margin-top:12px;padding:5px 13px;border-radius:99px;
 }
-.front .brief{
-  margin-top:20px;text-align:center;font-size:14.5px;line-height:1.6;
-  color:rgba(0,0,0,.66);max-width:30ch;
-}
+.front .brief{margin-top:18px;text-align:center;font-size:14.5px;line-height:1.6;color:rgba(0,0,0,.66);max-width:30ch}
 .front[data-team="mafia"] .role{color:var(--ember)}
 .front[data-team="mafia"] .team{background:rgba(181,71,58,.14);color:#8e3227}
 .front[data-team="town"] .team{background:rgba(0,0,0,.07);color:rgba(0,0,0,.55)}
 .front[data-role="doctor"] .role{color:#2c6b59}
 .front[data-role="detective"] .role{color:#2f5580}
 
-.mod-row{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:11px 0;border-bottom:1px solid var(--line);
+/* results */
+.banner{
+  text-align:center;padding:24px 20px;border-radius:var(--r);margin-bottom:14px;
+  border:1px solid var(--line);
 }
-.mod-row:last-child{border-bottom:none}
-.mod-row .n{font-family:'JetBrains Mono',monospace;color:var(--fog);font-size:13px}
-.mod-row .r{font-weight:700;letter-spacing:.03em}
-.mod-row .r.mafia{color:var(--ember)}
-.mod-row .r.doctor{color:var(--teal)}
-.mod-row .r.detective{color:var(--azure)}
+.banner.town{background:rgba(63,143,123,.12);border-color:rgba(63,143,123,.45)}
+.banner.mafia{background:rgba(181,71,58,.12);border-color:rgba(181,71,58,.45)}
+.banner h3{
+  font-family:'Special Elite',serif;font-weight:400;font-size:clamp(26px,7.5vw,38px);
+  letter-spacing:.05em;text-transform:uppercase;line-height:1;
+}
+.banner.town h3{color:var(--teal)}
+.banner.mafia h3{color:var(--ember)}
+.banner p{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fog);margin-top:10px}
+
+.line{
+  display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);
+}
+.line:last-child{border-bottom:none}
+.line .nm{flex:1;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.line .rl{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;padding:4px 9px;border-radius:99px;border:1px solid var(--line);color:var(--fog);
+}
+.line .rl.mafia{color:var(--ember);border-color:rgba(181,71,58,.4)}
+.line .rl.doctor{color:var(--teal);border-color:rgba(63,143,123,.4)}
+.line .rl.detective{color:var(--azure);border-color:rgba(69,113,168,.4)}
+.line .dl{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;min-width:52px;text-align:right}
+.line .dl.up{color:var(--teal)}
+.line .dl.down{color:var(--ember)}
+
+/* leaderboard */
+.lb-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.lb-row:last-child{border-bottom:none}
+.lb-row .rk{
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--fog);
+  width:26px;text-align:right;flex-shrink:0;
+}
+.lb-row:nth-child(1) .rk{color:var(--brass);font-weight:700}
+.lb-row .nm{flex:1;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-row .st{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--fog)}
+.lb-row .el{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--brass);min-width:56px;text-align:right}
+.empty-state{text-align:center;color:var(--fog);font-size:14.5px;padding:24px 0}
+
 .blur{filter:blur(9px);transition:filter .2s;pointer-events:none}
 .blur.show{filter:none}
 
 .foot{
-  margin-top:auto;padding-top:26px;text-align:center;
-  font-family:'JetBrains Mono',monospace;font-size:11px;
+  margin-top:auto;padding-top:28px;text-align:center;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;
   letter-spacing:.13em;color:#3d465e;text-transform:uppercase;
 }
 
-@media(min-width:860px){
-  .wrap{max-width:960px;padding-top:52px}
-  .mast h1{font-size:56px}
-  .two{display:grid;grid-template-columns:1.05fr .95fr;gap:16px;align-items:start}
+@media(min-width:900px){
+  .wrap{max-width:1000px;padding-top:40px}
+  .brand{font-size:26px;margin-bottom:20px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
   .card{aspect-ratio:3/4;max-height:none}
-  .screen-card{max-width:420px;margin:0 auto}
-  .seats{grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
+  .narrow{max-width:400px;margin:0 auto}
+  .tabs{max-width:520px;margin:0 auto 28px}
 }
-@media(prefers-reduced-motion:reduce){
-  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
-}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 :focus-visible{outline:2px solid var(--brass);outline-offset:3px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- ===== HOME ===== -->
-<section class="screen on" id="s-home">
-  <div class="mast">
-    <h1>Night<span>fall</span></h1>
-    <p>Mafia, dealt to every phone</p>
-    <div class="rule"></div>
-  </div>
-  <div class="stack">
-    <button class="btn btn-primary" data-go="setup">Deal a new game</button>
-    <button class="btn btn-ghost" data-go="join">Join with a code</button>
-  </div>
-  <div class="panel" style="margin-top:20px">
-    <span class="eyebrow">How it works</span>
-    <p class="prose">
-      One person sets the roles and gets a six-character code. Everyone types that
-      code on their own phone and claims a seat number. Same code, same seat, same
-      role — every phone works it out on its own, so there's nothing to sign up for
-      and no host to keep alive.
-    </p>
-  </div>
-</section>
+<div class="brand">Night<span>fall</span></div>
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="play" aria-selected="true">Play</button>
+  <button role="tab" data-tab="board" aria-selected="false">Ratings</button>
+  <button role="tab" data-tab="rules" aria-selected="false">Rules</button>
+</nav>
 
-<!-- ===== SETUP ===== -->
-<section class="screen" id="s-setup">
-  <div class="mast"><h1>The <span>table</span></h1><div class="rule"></div></div>
-  <div class="two">
-    <div>
-      <div class="panel">
-        <span class="eyebrow">Who's playing</span>
-        <div class="row">
-          <div class="lab">Players<span class="sub">Everyone at the table</span></div>
-          <div class="step">
-            <button data-adj="players" data-d="-1" aria-label="One fewer player">−</button>
-            <span class="val" id="v-players">8</span>
-            <button data-adj="players" data-d="1" aria-label="One more player">+</button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="lab">Mafia<span class="sub">Capped below half the table</span></div>
-          <div class="step">
-            <button data-adj="mafia" data-d="-1" aria-label="One fewer mafia">−</button>
-            <span class="val" id="v-mafia">2</span>
-            <button data-adj="mafia" data-d="1" aria-label="One more mafia">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="panel">
-        <span class="eyebrow">Special roles</span>
-        <div class="row">
-          <div class="lab">Doctor<span class="sub">Saves one player each night</span></div>
-          <button class="tog" role="switch" aria-checked="true" data-tog="doctor"></button>
-        </div>
-        <div class="row">
-          <div class="lab">Detective<span class="sub">Investigates one player each night</span></div>
-          <button class="tog" role="switch" aria-checked="true" data-tog="detective"></button>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="panel">
-        <span class="eyebrow">The deck</span>
-        <div class="roster" id="preview"></div>
-        <div class="warn" id="warn"><span>⚠</span><span id="warn-t"></span></div>
-      </div>
-      <div class="stack">
-        <button class="btn btn-primary" id="deal">Deal the cards</button>
-        <button class="btn btn-ghost" data-go="home">Back</button>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ==================== PLAY ==================== -->
+<div class="view on" id="v-play">
 
-<!-- ===== CODE ===== -->
-<section class="screen" id="s-code">
-  <div class="mast"><h1>Pass it <span>around</span></h1><div class="rule"></div></div>
-  <div class="panel codebox">
-    <span class="eyebrow">Game code</span>
-    <div class="code" id="out-code">—</div>
-    <p class="hint">Everyone opens this page, taps <b>Join with a code</b>, types this,
-       and claims a seat number. Call your seat out loud so no two people take the same one.</p>
-    <div class="roster" id="out-roster"></div>
-  </div>
-  <div class="stack">
-    <button class="btn btn-primary" id="copy">Copy the link</button>
-    <button class="btn btn-ghost" data-go="join">Claim my own seat</button>
-    <button class="btn btn-ghost" id="redeal">Deal again, same setup</button>
-    <button class="btn btn-ghost" id="to-mod">Open the moderator sheet</button>
-    <button class="btn btn-ghost" data-go="setup">Change the setup</button>
-  </div>
-</section>
-
-<!-- ===== JOIN ===== -->
-<section class="screen" id="s-join">
-  <div class="mast"><h1>Take a <span>seat</span></h1><div class="rule"></div></div>
-  <div class="panel">
-    <div class="field">
-      <label for="in-code">Game code</label>
-      <input id="in-code" maxlength="7" placeholder="••••••" autocomplete="off"
-             autocapitalize="characters" spellcheck="false" inputmode="text">
-    </div>
-    <div class="warn" id="join-warn"><span>⚠</span><span id="join-warn-t"></span></div>
-    <div id="seat-wrap" style="display:none">
-      <label style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fog);margin:18px 0 10px">Your seat</label>
-      <div class="seats" id="seats"></div>
-    </div>
-  </div>
-  <div class="stack">
-    <button class="btn btn-primary" id="reveal-go" disabled>See my card</button>
-    <button class="btn btn-ghost" data-go="home">Back</button>
-  </div>
-</section>
-
-<!-- ===== CARD ===== -->
-<section class="screen" id="s-card">
-  <div class="screen-card">
-    <div class="dealt">
-      <button class="card" id="card" aria-label="Hold to reveal your role">
-        <div class="face back">
-          <div class="mark">M</div>
-          <div class="instr">Hold to reveal<br>Let go to hide</div>
-          <div class="ring"><i></i></div>
-        </div>
-        <div class="face front" id="front" data-team="town">
-          <div class="seatno" id="c-seat">SEAT 1</div>
-          <div class="glyph" id="c-glyph">🕯</div>
-          <div class="role" id="c-role">Villager</div>
-          <div class="team" id="c-team">Town</div>
-          <div class="brief" id="c-brief"></div>
-        </div>
-      </button>
+  <!-- lobby chooser -->
+  <section class="stage" id="st-home">
+    <h2 class="head">Who's <span>in</span></h2>
+    <p class="sub-line">Start a table or join one</p>
+    <div class="panel">
+      <div class="field">
+        <label for="in-name">Your name</label>
+        <input id="in-name" maxlength="18" placeholder="Rishi" autocomplete="nickname" spellcheck="false">
+      </div>
     </div>
     <div class="stack">
-      <button class="btn btn-ghost" data-go="join">Different seat</button>
-      <button class="btn btn-ghost" data-go="home">Leave the game</button>
+      <button class="btn btn-primary" id="go-setup">Start a new table</button>
     </div>
-  </div>
-</section>
+    <div class="panel" style="margin-top:14px">
+      <div class="field">
+        <label for="in-code">Join with a code</label>
+        <input id="in-code" maxlength="6" placeholder="••••••" autocomplete="off"
+               autocapitalize="characters" spellcheck="false">
+      </div>
+      <div class="stack">
+        <button class="btn btn-ghost" id="go-join">Join</button>
+      </div>
+      <div class="note" id="home-note"></div>
+    </div>
+  </section>
 
-<!-- ===== MODERATOR ===== -->
-<section class="screen" id="s-mod">
-  <div class="mast"><h1>Moderator <span>sheet</span></h1><div class="rule"></div></div>
+  <!-- setup -->
+  <section class="stage" id="st-setup" hidden>
+    <h2 class="head">The <span>table</span></h2>
+    <p class="sub-line">Set the deck</p>
+    <div class="two">
+      <div>
+        <div class="panel">
+          <span class="eyebrow">Who's playing</span>
+          <div class="row">
+            <div class="lab">Players<span class="sub">You can start short if someone flakes</span></div>
+            <div class="step">
+              <button data-adj="size" data-d="-1" aria-label="Fewer players">−</button>
+              <span class="val" id="v-size">8</span>
+              <button data-adj="size" data-d="1" aria-label="More players">+</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="lab">Mafia<span class="sub">Always below half the table</span></div>
+            <div class="step">
+              <button data-adj="mafia" data-d="-1" aria-label="Fewer mafia">−</button>
+              <span class="val" id="v-mafia">2</span>
+              <button data-adj="mafia" data-d="1" aria-label="More mafia">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="eyebrow">Special roles</span>
+          <div class="row">
+            <div class="lab">Doctor<span class="sub">Saves one player each night</span></div>
+            <button class="tog" role="switch" aria-checked="true" data-tog="doctor"></button>
+          </div>
+          <div class="row">
+            <div class="lab">Detective<span class="sub">Investigates one player each night</span></div>
+            <button class="tog" role="switch" aria-checked="true" data-tog="detective"></button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="panel">
+          <span class="eyebrow">The deck</span>
+          <div class="chips" id="preview"></div>
+          <div class="note" id="setup-note"></div>
+        </div>
+        <div class="stack">
+          <button class="btn btn-primary" id="create">Open the table</button>
+          <button class="btn btn-ghost" data-stage="home">Back</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- lobby -->
+  <section class="stage" id="st-lobby" hidden>
+    <h2 class="head">Waiting <span>room</span></h2>
+    <p class="sub-line" id="lobby-sub">Read the code out loud</p>
+    <div class="two">
+      <div class="panel codebox">
+        <span class="eyebrow">Game code</span>
+        <div class="code" id="out-code">—</div>
+        <p class="hint">Everyone opens this page, types this, and joins.</p>
+        <div class="chips" id="out-chips"></div>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">In the room</span>
+        <div class="count"><b id="lob-n">0</b> / <span id="lob-t">8</span> joined</div>
+        <div class="who" id="lob-who"></div>
+      </div>
+    </div>
+    <div class="stack">
+      <button class="btn btn-primary" id="start" hidden>Start the game</button>
+      <div class="panel" id="wait-note" style="text-align:center;color:var(--fog);font-size:14px">
+        Waiting for the host to start…
+      </div>
+    </div>
+    <div class="links">
+      <button id="copy">Copy link</button>
+      <button data-stage="home">Leave</button>
+    </div>
+    <div class="note" id="lobby-note"></div>
+  </section>
+
+  <!-- card -->
+  <section class="stage" id="st-card" hidden>
+    <div class="narrow">
+      <p class="sub-line" id="card-sub">Round 1 · keep it to yourself</p>
+      <div class="dealt">
+        <button class="card" id="card" aria-label="Hold to reveal your role">
+          <div class="face back">
+            <div class="mark">M</div>
+            <div class="instr">Hold to reveal<br>Let go to hide</div>
+            <div class="ring"><i></i></div>
+          </div>
+          <div class="face front" id="front" data-team="town">
+            <div class="glyph" id="c-glyph">🕯</div>
+            <div class="role" id="c-role">Villager</div>
+            <div class="team" id="c-team">Town</div>
+            <div class="brief" id="c-brief"></div>
+          </div>
+        </button>
+      </div>
+      <div id="host-end" hidden>
+        <span class="eyebrow" style="text-align:center">Who won?</span>
+        <div class="pair">
+          <button class="btn btn-town" data-win="town">Town</button>
+          <button class="btn btn-mafia" data-win="mafia">Mafia</button>
+        </div>
+      </div>
+      <div class="panel" id="sheet-panel" hidden style="margin-top:14px">
+        <span class="eyebrow">Moderator sheet</span>
+        <div id="sheet" class="blur"></div>
+        <div class="stack"><button class="btn btn-ghost" id="sheet-hold">Hold to show</button></div>
+      </div>
+      <div class="links"><button data-stage="home">Leave the game</button></div>
+    </div>
+  </section>
+
+  <!-- results -->
+  <section class="stage" id="st-done" hidden>
+    <div class="banner" id="banner">
+      <h3 id="win-title">Town wins</h3>
+      <p id="win-sub">Round 1</p>
+    </div>
+    <div class="panel">
+      <span class="eyebrow">Everyone's card, and what it cost them</span>
+      <div id="deltas"></div>
+    </div>
+    <div class="stack" id="host-again" hidden>
+      <button class="btn btn-primary" id="again">Play again, same players</button>
+    </div>
+    <div class="panel" id="wait-again" style="text-align:center;color:var(--fog);font-size:14px">
+      Waiting for the host to redeal…
+    </div>
+    <div class="links"><button data-stage="home">Leave the game</button></div>
+  </section>
+</div>
+
+<!-- ==================== RATINGS ==================== -->
+<div class="view" id="v-board">
+  <h2 class="head">The <span>standings</span></h2>
+  <p class="sub-line">Everyone starts at 1200</p>
   <div class="panel">
-    <span class="eyebrow">Every seat</span>
-    <div id="mod-list" class="blur"></div>
+    <div id="board"><div class="empty-state">Loading…</div></div>
   </div>
-  <div class="stack">
-    <button class="btn btn-primary" id="mod-hold">Hold to show</button>
-    <button class="btn btn-ghost" data-go="code">Back to the code</button>
-  </div>
+  <div class="stack"><button class="btn btn-ghost" id="refresh">Refresh</button></div>
   <div class="panel" style="margin-top:14px">
+    <span class="eyebrow">How the rating moves</span>
+    <p class="prose">
+      Win and you take points off the losing side; lose and you hand them over. How
+      many depends on the gap between the two teams' averages, so beating a strong
+      table is worth more than beating a weak one. Being outnumbered as mafia pays
+      better, and losing as mafia costs less — the maths accounts for the shorter side.
+    </p>
+  </div>
+</div>
+
+<!-- ==================== RULES ==================== -->
+<div class="view" id="v-rules">
+  <h2 class="head">How it <span>goes</span></h2>
+  <p class="sub-line">For whoever's narrating</p>
+  <div class="panel">
     <span class="eyebrow">Night script</span>
     <p class="prose">
       Everyone close your eyes.<br>
@@ -426,107 +500,102 @@ body::before{
       Detective, close your eyes. Everyone, open your eyes.
     </p>
   </div>
-</section>
+  <div class="panel">
+    <span class="eyebrow">The roles</span>
+    <div class="line"><span class="nm">Mafia</span><span class="rl mafia">Kills at night</span></div>
+    <div class="line"><span class="nm">Doctor</span><span class="rl doctor">Saves at night</span></div>
+    <div class="line"><span class="nm">Detective</span><span class="rl detective">Checks at night</span></div>
+    <div class="line"><span class="nm">Villager</span><span class="rl">Votes by day</span></div>
+  </div>
+  <div class="panel">
+    <span class="eyebrow">Winning</span>
+    <p class="prose">
+      Town wins when the last mafia is voted out. Mafia win when they equal or
+      outnumber everyone left. The host calls it on the results screen and the
+      ratings update for everyone at the table.
+    </p>
+  </div>
+</div>
 
-<div class="foot">Nightfall · no accounts, no server, no tells</div>
+<div class="foot">Nightfall · one deck, one card each</div>
 </div>
 
 <script>
 (function(){
 'use strict';
 
-var AB='23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // no I/O/0/1
-
 var ROLES={
   mafia:{name:'Mafia',team:'mafia',glyph:'🔪',
-    brief:'Wake with the other mafia each night and choose someone to eliminate. By day, blend in.'},
+    brief:'Wake with the other mafia each night and pick someone to eliminate. By day, blend in.'},
   doctor:{name:'Doctor',team:'town',glyph:'⚕',
-    brief:'Each night, choose one person to protect. If the mafia go for them, they survive.'},
+    brief:'Each night, choose one person to protect. If the mafia go for them, they live.'},
   detective:{name:'Detective',team:'town',glyph:'🔍',
     brief:'Each night, choose one person to investigate. You learn whether they are mafia.'},
   villager:{name:'Villager',team:'town',glyph:'🕯',
     brief:'No night power. Your vote and your read on the room are the whole job.'}
 };
 
-var cfg={players:8,mafia:2,doctor:true,detective:true};
-var current=null;
-var seat=null;
+var cfg={size:8,mafia:2,doctor:true,detective:true};
+var code=null, state=null, poll=null, lastStatus=null, lastRound=null;
 
-/* --- deterministic PRNG so every phone shuffles identically --- */
-function mulberry32(a){
-  return function(){
-    a=a+0x6D2B79F5|0;
-    var t=Math.imul(a^a>>>15,1|a);
-    t=t+Math.imul(t^t>>>7,61|t)^t;
-    return ((t^t>>>14)>>>0)/4294967296;
-  };
-}
-function pack(p,m,d,c,seed){return ((((seed*32+p)*8+m)*2+(d?1:0))*2+(c?1:0));}
-function unpack(n){
-  var c=n%2;n=(n-c)/2;
-  var d=n%2;n=(n-d)/2;
-  var m=n%8;n=(n-m)/8;
-  var p=n%32;n=(n-p)/32;
-  return {players:p,mafia:m,doctor:!!d,detective:!!c,seed:n};
-}
-function enc(n){
-  var s='';
-  do{s=AB[n%32]+s;n=Math.floor(n/32);}while(n>0);
-  while(s.length<6)s=AB[0]+s;
-  return s;
-}
-function dec(s){
-  s=String(s).toUpperCase().replace(/[^0-9A-Z]/g,'')
-     .replace(/O/g,'0').replace(/I/g,'1').replace(/L/g,'1');
-  if(!s)return null;
-  var n=0;
-  for(var i=0;i<s.length;i++){
-    var v=AB.indexOf(s[i]);
-    if(v<0)return null;
-    n=n*32+v;
-  }
-  return n;
-}
-function build(code){
-  var n=dec(code);
-  if(n===null)return null;
-  var u=unpack(n);
-  if(u.players<4||u.players>24)return null;
-  if(u.mafia<1||u.mafia>=Math.ceil(u.players/2))return null;
-  var specials=(u.doctor?1:0)+(u.detective?1:0);
-  if(u.mafia+specials>u.players)return null;
+var ME=(function(){
+  var v=null;
+  try{v=localStorage.getItem('nf_id');}catch(e){}
+  if(!v){v=Math.random().toString(36).slice(2)+Date.now().toString(36);
+    try{localStorage.setItem('nf_id',v);}catch(e){}}
+  return v;
+})();
 
-  var deck=[],i;
-  for(i=0;i<u.mafia;i++)deck.push('mafia');
-  if(u.doctor)deck.push('doctor');
-  if(u.detective)deck.push('detective');
-  while(deck.length<u.players)deck.push('villager');
+var $=function(id){return document.getElementById(id);};
 
-  var rnd=mulberry32(n^0x9E3779B9);
-  for(i=deck.length-1;i>0;i--){
-    var k=Math.floor(rnd()*(i+1));
-    var t=deck[i];deck[i]=deck[k];deck[k]=t;
-  }
-  return {code:enc(n),players:u.players,mafia:u.mafia,
-          doctor:u.doctor,detective:u.detective,roles:deck};
+/* ---------- tabs & stages ---------- */
+function tab(name){
+  document.querySelectorAll('.tabs button').forEach(function(b){
+    b.setAttribute('aria-selected',String(b.getAttribute('data-tab')===name));
+  });
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
+  $('v-'+name).classList.add('on');
+  if(name==='board')loadBoard();
+  window.scrollTo(0,0);
 }
-
-/* --- navigation --- */
-function go(id){
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
-  document.getElementById('s-'+id).classList.add('on');
+document.querySelectorAll('.tabs button').forEach(function(b){
+  b.addEventListener('click',function(){tab(b.getAttribute('data-tab'));});
+});
+function stage(id){
+  document.querySelectorAll('#v-play .stage').forEach(function(s){s.hidden=(s.id!=='st-'+id);});
   window.scrollTo(0,0);
 }
 document.addEventListener('click',function(e){
-  var b=e.target.closest('[data-go]');
-  if(b)go(b.getAttribute('data-go'));
+  var b=e.target.closest('[data-stage]');
+  if(!b)return;
+  var s=b.getAttribute('data-stage');
+  if(s==='home'){stopPoll();code=null;state=null;lastStatus=null;}
+  stage(s);
 });
 
-/* --- setup --- */
-function maxMafia(){return Math.max(1,Math.ceil(cfg.players/2)-1);}
-function chipsFor(o){
+/* ---------- api ---------- */
+function api(action,body){
+  return fetch('/api/game?action='+action,{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(Object.assign({client:ME},body||{}))
+  }).then(function(r){
+    return r.json().then(function(j){
+      if(!r.ok)throw new Error(j.error||('Server said '+r.status));
+      return j;
+    });
+  });
+}
+function note(id,msg){
+  var el=$(id);
+  el.textContent=msg||'';
+  el.classList.toggle('on',!!msg);
+}
+
+/* ---------- setup ---------- */
+function maxMafia(){return Math.max(1,Math.ceil(cfg.size/2)-1);}
+function chips(o){
   var sp=(o.doctor?1:0)+(o.detective?1:0);
-  var vil=o.players-o.mafia-sp;
+  var vil=o.size-o.mafia-sp;
   var h='<span class="chip"><b>'+o.mafia+'</b> mafia</span>';
   if(o.doctor)h+='<span class="chip"><b>1</b> doctor</span>';
   if(o.detective)h+='<span class="chip"><b>1</b> detective</span>';
@@ -535,23 +604,19 @@ function chipsFor(o){
 }
 function paint(){
   if(cfg.mafia>maxMafia())cfg.mafia=maxMafia();
-  document.getElementById('v-players').textContent=cfg.players;
-  document.getElementById('v-mafia').textContent=cfg.mafia;
+  $('v-size').textContent=cfg.size;
+  $('v-mafia').textContent=cfg.mafia;
   document.querySelector('[data-tog="doctor"]').setAttribute('aria-checked',cfg.doctor);
   document.querySelector('[data-tog="detective"]').setAttribute('aria-checked',cfg.detective);
-  document.getElementById('preview').innerHTML=chipsFor(cfg);
+  $('preview').innerHTML=chips(cfg);
 
   var sp=(cfg.doctor?1:0)+(cfg.detective?1:0);
-  var vil=cfg.players-cfg.mafia-sp;
-  var msg='';
-  if(vil<0)msg='That is more special roles than seats. Add players or drop a role.';
-  else if(vil===0&&cfg.mafia>0)msg='Nobody is a plain villager. That plays fine, but the town has no cover.';
-  document.getElementById('warn').classList.toggle('on',!!msg);
-  document.getElementById('warn-t').textContent=msg;
-  document.getElementById('deal').disabled=vil<0;
+  var vil=cfg.size-cfg.mafia-sp;
+  note('setup-note',vil<0?'More special roles than players. Add players or drop a role.':'');
+  $('create').disabled=vil<0;
 
-  document.querySelector('[data-adj="players"][data-d="-1"]').disabled=cfg.players<=4;
-  document.querySelector('[data-adj="players"][data-d="1"]').disabled=cfg.players>=24;
+  document.querySelector('[data-adj="size"][data-d="-1"]').disabled=cfg.size<=4;
+  document.querySelector('[data-adj="size"][data-d="1"]').disabled=cfg.size>=24;
   document.querySelector('[data-adj="mafia"][data-d="-1"]').disabled=cfg.mafia<=1;
   document.querySelector('[data-adj="mafia"][data-d="1"]').disabled=cfg.mafia>=maxMafia();
   try{localStorage.setItem('nf_cfg',JSON.stringify(cfg));}catch(e){}
@@ -559,95 +624,194 @@ function paint(){
 document.querySelectorAll('[data-adj]').forEach(function(b){
   b.addEventListener('click',function(){
     var k=b.getAttribute('data-adj'),d=+b.getAttribute('data-d');
-    if(k==='players')cfg.players=Math.min(24,Math.max(4,cfg.players+d));
+    if(k==='size')cfg.size=Math.min(24,Math.max(4,cfg.size+d));
     else cfg.mafia=Math.min(maxMafia(),Math.max(1,cfg.mafia+d));
     paint();
   });
 });
 document.querySelectorAll('[data-tog]').forEach(function(b){
   b.addEventListener('click',function(){
-    var k=b.getAttribute('data-tog');
-    cfg[k]=!cfg[k];paint();
+    var k=b.getAttribute('data-tog');cfg[k]=!cfg[k];paint();
   });
 });
 
-/* --- deal --- */
-function dealNew(){
-  var seed=Math.floor(Math.random()*65536);
-  var code=enc(pack(cfg.players,cfg.mafia,cfg.doctor,cfg.detective,seed));
-  current=build(code);
-  seat=null;
-  document.getElementById('out-code').textContent=code;
-  document.getElementById('out-roster').innerHTML=chipsFor(current);
-  try{localStorage.setItem('nf_code',code);localStorage.removeItem('nf_seat');}catch(e){}
-  document.getElementById('in-code').value=code;
-  loadCode();
-  go('code');
-}
-document.getElementById('deal').addEventListener('click',dealNew);
-document.getElementById('redeal').addEventListener('click',dealNew);
-
-document.getElementById('copy').addEventListener('click',function(){
-  var url=location.origin+location.pathname+'#'+document.getElementById('out-code').textContent;
-  var btn=this;
-  function done(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy the link';},1600);}
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(done,function(){prompt('Copy this link:',url);});
-  }else prompt('Copy this link:',url);
+/* ---------- name ---------- */
+function myName(){return $('in-name').value.trim();}
+$('in-name').addEventListener('input',function(){
+  try{localStorage.setItem('nf_name',myName());}catch(e){}
 });
 
-/* --- join --- */
-var input=document.getElementById('in-code');
-function loadCode(){
-  var g=build(input.value);
-  var wrap=document.getElementById('seat-wrap');
-  var w=document.getElementById('join-warn');
-  if(!g){
-    wrap.style.display='none';
-    document.getElementById('reveal-go').disabled=true;
-    var bad=input.value.replace(/[^0-9A-Za-z]/g,'').length>=6;
-    w.classList.toggle('on',bad);
-    document.getElementById('join-warn-t').textContent=
-      bad?'No game matches that code. Check it with whoever dealt.':'';
-    return;
+/* ---------- create / join ---------- */
+$('go-setup').addEventListener('click',function(){
+  if(!myName()){note('home-note','Put your name in first.');return;}
+  note('home-note','');
+  stage('setup');
+});
+$('create').addEventListener('click',function(){
+  var btn=this;btn.disabled=true;
+  api('create',{size:cfg.size,mafia:cfg.mafia,doctor:cfg.doctor,detective:cfg.detective})
+    .then(function(s){
+      code=s.code;
+      return api('join',{code:code,name:myName()});
+    })
+    .then(function(s){apply(s);startPoll();})
+    .catch(function(e){note('setup-note',e.message);})
+    .then(function(){btn.disabled=false;});
+});
+$('go-join').addEventListener('click',function(){
+  var c=$('in-code').value.toUpperCase().replace(/[^0-9A-Z]/g,'');
+  if(!myName()){note('home-note','Put your name in first.');return;}
+  if(c.length<6){note('home-note','That code is too short.');return;}
+  var btn=this;btn.disabled=true;
+  api('join',{code:c,name:myName()})
+    .then(function(s){code=c;note('home-note','');apply(s);startPoll();})
+    .catch(function(e){note('home-note',e.message);})
+    .then(function(){btn.disabled=false;});
+});
+
+/* ---------- polling ---------- */
+function startPoll(){
+  stopPoll();
+  poll=setInterval(function(){
+    if(!code)return;
+    api('state',{code:code}).then(apply).catch(function(){});
+  },2200);
+}
+function stopPoll(){if(poll){clearInterval(poll);poll=null;}}
+
+/* ---------- render whatever the server says ---------- */
+function apply(s){
+  state=s;code=s.code;
+
+  if(s.status==='lobby'){
+    $('out-code').textContent=s.code;
+    $('out-chips').innerHTML=chips({size:s.size,mafia:s.settings.mafia,
+      doctor:s.settings.doctor,detective:s.settings.detective});
+    $('lob-n').textContent=s.joined;
+    $('lob-t').textContent=s.size;
+    var h='';
+    s.players.forEach(function(p){
+      h+='<span class="tag'+(p.me?' me':'')+'">'+esc(p.name)+'</span>';
+    });
+    for(var i=s.joined;i<s.size;i++)h+='<span class="tag empty">empty</span>';
+    $('lob-who').innerHTML=h;
+    $('start').hidden=!s.isHost;
+    $('wait-note').hidden=s.isHost;
+    if(s.isHost){
+      $('start').disabled=s.joined<4;
+      $('start').textContent=s.joined>=s.size?'Start the game'
+        :(s.joined<4?'Need at least four':'Start with '+s.joined);
+    }
+    $('lobby-sub').textContent=s.isHost?'Read the code out loud':'Waiting for the host';
+    stage('lobby');
   }
-  w.classList.remove('on');
-  current=g;
-  wrap.style.display='block';
-  var h='';
-  for(var i=1;i<=g.players;i++)
-    h+='<button class="seat'+(seat===i?' sel':'')+'" data-seat="'+i+'">'+i+'</button>';
-  document.getElementById('seats').innerHTML=h;
-  document.getElementById('reveal-go').disabled=!seat;
-}
-input.addEventListener('input',function(){seat=null;loadCode();});
-document.getElementById('seats').addEventListener('click',function(e){
-  var b=e.target.closest('[data-seat]');
-  if(!b)return;
-  seat=+b.getAttribute('data-seat');
-  document.querySelectorAll('.seat').forEach(function(s){s.classList.remove('sel');});
-  b.classList.add('sel');
-  document.getElementById('reveal-go').disabled=false;
-});
-document.getElementById('reveal-go').addEventListener('click',function(){
-  if(!current||!seat)return;
-  try{localStorage.setItem('nf_code',current.code);localStorage.setItem('nf_seat',seat);}catch(e){}
-  showCard();
-  go('card');
-});
 
-/* --- the card --- */
-function showCard(){
-  var key=current.roles[seat-1],r=ROLES[key],f=document.getElementById('front');
+  if(s.status==='playing'){
+    if(lastStatus!=='playing'||lastRound!==s.round)renderCard(s);
+    stage('card');
+  }
+
+  if(s.status==='ended'){
+    renderDone(s);
+    stage('done');
+  }
+  lastStatus=s.status;
+  lastRound=s.round;
+}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+
+function renderCard(s){
+  var key=(s.me&&s.me.role)||'villager',r=ROLES[key],f=$('front');
   f.setAttribute('data-team',r.team);
   f.setAttribute('data-role',key);
-  document.getElementById('c-seat').textContent='SEAT '+seat;
-  document.getElementById('c-glyph').textContent=r.glyph;
-  document.getElementById('c-role').textContent=r.name;
-  document.getElementById('c-team').textContent=r.team==='mafia'?'Mafia':'Town';
-  document.getElementById('c-brief').textContent=r.brief;
-  document.getElementById('card').classList.remove('open','holding');
+  $('c-glyph').textContent=r.glyph;
+  $('c-role').textContent=r.name;
+  $('c-team').textContent=r.team==='mafia'?'Mafia':'Town';
+  $('c-brief').textContent=r.brief;
+  $('card').classList.remove('open','holding');
+  $('card-sub').textContent='Round '+(s.round||1)+' · keep it to yourself';
+
+  $('host-end').hidden=!s.isHost;
+  $('sheet-panel').hidden=!s.isHost;
+  if(s.sheet){
+    var h='';
+    s.sheet.forEach(function(p){
+      h+='<div class="line"><span class="nm">'+esc(p.name)+
+         '</span><span class="rl '+p.role+'">'+ROLES[p.role].name+'</span></div>';
+    });
+    $('sheet').innerHTML=h;
+    $('sheet').classList.remove('show');
+  }
 }
+function renderDone(s){
+  var w=s.result.winner;
+  $('banner').className='banner '+w;
+  $('win-title').textContent=w==='town'?'Town wins':'Mafia wins';
+  $('win-sub').textContent='Round '+(s.round||1);
+  var h='';
+  (s.result.deltas||[]).forEach(function(d){
+    var cls=d.delta>0?'up':(d.delta<0?'down':'');
+    var sign=d.delta>0?'+':'';
+    h+='<div class="line"><span class="nm">'+esc(d.name)+
+       '</span><span class="rl '+d.role+'">'+ROLES[d.role].name+
+       '</span><span class="dl '+cls+'">'+sign+d.delta+'</span></div>';
+  });
+  $('deltas').innerHTML=h||'<div class="empty-state">No ratings recorded.</div>';
+  $('host-again').hidden=!s.isHost;
+  $('wait-again').hidden=s.isHost;
+}
+
+/* ---------- host actions ---------- */
+$('start').addEventListener('click',function(){
+  var b=this;b.disabled=true;
+  api('start',{code:code}).then(apply)
+    .catch(function(e){note('lobby-note',e.message);})
+    .then(function(){b.disabled=false;});
+});
+document.querySelectorAll('[data-win]').forEach(function(b){
+  b.addEventListener('click',function(){
+    b.disabled=true;
+    api('end',{code:code,winner:b.getAttribute('data-win')})
+      .then(apply).catch(function(){}).then(function(){b.disabled=false;});
+  });
+});
+$('again').addEventListener('click',function(){
+  var b=this;b.disabled=true;
+  api('rematch',{code:code}).then(apply).catch(function(){}).then(function(){b.disabled=false;});
+});
+$('copy').addEventListener('click',function(){
+  var url=location.origin+location.pathname+'#'+code, btn=this;
+  function ok(){btn.textContent='Copied';setTimeout(function(){btn.textContent='Copy link';},1500);}
+  if(navigator.clipboard&&navigator.clipboard.writeText)
+    navigator.clipboard.writeText(url).then(ok,function(){prompt('Copy this:',url);});
+  else prompt('Copy this:',url);
+});
+
+/* ---------- leaderboard ---------- */
+function loadBoard(){
+  fetch('/api/game?action=board',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:'{}'}).then(function(r){return r.json();}).then(function(j){
+    var rows=j.rows||[];
+    if(!rows.length){
+      $('board').innerHTML='<div class="empty-state">No games finished yet. Play one and the table fills in.</div>';
+      return;
+    }
+    var h='';
+    rows.forEach(function(p,i){
+      h+='<div class="lb-row"><span class="rk">'+(i+1)+
+         '</span><span class="nm">'+esc(p.name)+
+         '</span><span class="st">'+p.w+'/'+p.g+
+         '</span><span class="el">'+p.r+'</span></div>';
+    });
+    $('board').innerHTML=h;
+  }).catch(function(){
+    $('board').innerHTML='<div class="empty-state">Could not load the ratings.</div>';
+  });
+}
+$('refresh').addEventListener('click',loadBoard);
+
+/* ---------- hold to reveal ---------- */
 function holdToOpen(el,onOpen,onClose){
   var timer=null,open=false;
   function down(e){
@@ -676,50 +840,25 @@ function holdToOpen(el,onOpen,onClose){
   el.addEventListener('dragstart',function(e){e.preventDefault();});
   el.addEventListener('selectstart',function(e){e.preventDefault();});
 }
-var cardEl=document.getElementById('card');
-holdToOpen(cardEl,
-  function(){cardEl.classList.add('open');},
-  function(){cardEl.classList.remove('open');});
+var cardEl=$('card');
+holdToOpen(cardEl,function(){cardEl.classList.add('open');},
+                  function(){cardEl.classList.remove('open');});
+var sheetEl=$('sheet');
+holdToOpen($('sheet-hold'),function(){sheetEl.classList.add('show');},
+                           function(){sheetEl.classList.remove('show');});
 
-var modList=document.getElementById('mod-list');
-holdToOpen(document.getElementById('mod-hold'),
-  function(){modList.classList.add('show');},
-  function(){modList.classList.remove('show');});
-
-/* --- moderator --- */
-document.getElementById('to-mod').addEventListener('click',function(){
-  if(!current)return;
-  var h='';
-  for(var i=0;i<current.roles.length;i++){
-    var r=ROLES[current.roles[i]];
-    h+='<div class="mod-row"><span class="n">SEAT '+(i+1)+
-       '</span><span class="r '+current.roles[i]+'">'+r.name+'</span></div>';
-  }
-  modList.innerHTML=h;
-  modList.classList.remove('show');
-  go('mod');
-});
-
-/* --- restore from link or last session --- */
+/* ---------- boot ---------- */
 (function(){
   try{
-    var s=JSON.parse(localStorage.getItem('nf_cfg')||'null');
-    if(s&&s.players)cfg={players:s.players,mafia:s.mafia,doctor:!!s.doctor,detective:!!s.detective};
+    var c=JSON.parse(localStorage.getItem('nf_cfg')||'null');
+    if(c&&c.size)cfg={size:c.size,mafia:c.mafia,doctor:!!c.doctor,detective:!!c.detective};
+    var n=localStorage.getItem('nf_name');
+    if(n)$('in-name').value=n;
   }catch(e){}
   paint();
-
-  var fromHash=location.hash.replace('#','').trim();
-  var saved='';
-  try{saved=localStorage.getItem('nf_code')||'';}catch(e){}
-  var code=fromHash||saved;
-  if(code&&build(code)){
-    input.value=build(code).code;
-    var s2=null;
-    try{s2=localStorage.getItem('nf_seat');}catch(e){}
-    if(!fromHash&&s2)seat=+s2;
-    loadCode();
-    if(fromHash)go('join');
-  }
+  var hash=location.hash.replace('#','').trim().toUpperCase().replace(/[^0-9A-Z]/g,'');
+  if(hash.length===6)$('in-code').value=hash;
+  stage('home');
 })();
 })();
 </script>
