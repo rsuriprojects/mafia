@@ -426,7 +426,7 @@ h2.head span{color:var(--brass)}
           <div class="face front" id="front" data-team="town">
             <div class="glyph" id="c-glyph">🕯</div>
             <div class="role" id="c-role">Villager</div>
-            <div class="team" id="c-team">Town</div>
+            <div class="team" id="c-team">Villagers</div>
             <div class="brief" id="c-brief"></div>
           </div>
         </button>
@@ -434,7 +434,7 @@ h2.head span{color:var(--brass)}
       <div id="host-end" hidden>
         <span class="eyebrow" style="text-align:center">Who won?</span>
         <div class="pair">
-          <button class="btn btn-town" data-win="town">Town</button>
+          <button class="btn btn-town" data-win="town">Villagers</button>
           <button class="btn btn-mafia" data-win="mafia">Mafia</button>
         </div>
       </div>
@@ -450,7 +450,7 @@ h2.head span{color:var(--brass)}
   <!-- results -->
   <section class="stage" id="st-done" hidden>
     <div class="banner" id="banner">
-      <h3 id="win-title">Town wins</h3>
+      <h3 id="win-title">Villagers win</h3>
       <p id="win-sub">Round 1</p>
     </div>
     <div class="panel">
@@ -499,7 +499,7 @@ h2.head span{color:var(--brass)}
       Doctor, open your eyes and point to who you're saving.<br>
       Doctor, close your eyes.<br>
       Detective, open your eyes and point to who you're checking — I'll nod for mafia,
-      shake for town.<br>
+      shake for a villager.<br>
       Detective, close your eyes. Everyone, open your eyes.
     </p>
   </div>
@@ -532,7 +532,7 @@ h2.head span{color:var(--brass)}
     </p>
     <div class="line"><span class="nm">Detective</span><span class="rl detective">Checks at night</span></div>
     <p class="prose" style="margin:8px 0 16px">
-      Each night you point at one person and the narrator nods for mafia, shakes for town.
+      Each night you point at one person and the narrator nods for mafia, shakes for a villager.
       The hard part is spending what you learn — claim too early and the mafia kill you,
       too late and nobody believes you.
     </p>
@@ -546,8 +546,8 @@ h2.head span{color:var(--brass)}
   <div class="panel">
     <span class="eyebrow">Winning</span>
     <p class="prose">
-      <b>Town wins</b> the moment the last mafia is voted out or killed.<br>
-      <b>Mafia win</b> the moment they equal the number of town left — at two mafia and two
+      <b>The villagers win</b> the moment the last mafia is voted out or killed.<br>
+      <b>Mafia win</b> the moment they equal the number of villagers left — at two mafia and two
       villagers, the mafia can always force the vote, so the game is over.<br><br>
       The host calls it on the results screen and everyone's rating updates at once.
     </p>
@@ -789,7 +789,7 @@ function renderCard(s){
   f.setAttribute('data-role',key);
   $('c-glyph').textContent=r.glyph;
   $('c-role').textContent=r.name;
-  $('c-team').textContent=r.team==='mafia'?'Mafia':'Town';
+  $('c-team').textContent=r.team==='mafia'?'Mafia':'Villagers';
   $('c-brief').textContent=r.brief;
   $('card').classList.remove('open','holding');
   $('card-sub').textContent='Round '+(s.round||1)+' · keep it to yourself';
@@ -809,7 +809,7 @@ function renderCard(s){
 function renderDone(s){
   var w=s.result.winner;
   $('banner').className='banner '+w;
-  $('win-title').textContent=w==='town'?'Town wins':'Mafia wins';
+  $('win-title').textContent=w==='town'?'Villagers win':'Mafia win';
   $('win-sub').textContent='Round '+(s.round||1);
   var h='';
   (s.result.deltas||[]).forEach(function(d){
