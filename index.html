@@ -177,7 +177,7 @@ h2.head span{color:var(--brass)}
   animation:pop .3s cubic-bezier(.2,.9,.3,1);
 }
 .tag.me{border-color:var(--brass);color:var(--brass)}
-.tag.empty{color:#3d465e;font-family:'JetBrains Mono',monospace;font-size:12px}
+.tag.empty{color:#3d465e;font-family:'JetBrains Mono',monospace;font-size:12px;animation:none}
 @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 
 /* card */
@@ -589,7 +589,7 @@ var ROLES={
 };
 
 var cfg={size:8,mafia:2,doctor:true,detective:true};
-var code=null, state=null, poll=null, lastStatus=null, lastRound=null;
+var code=null, state=null, poll=null, lastStatus=null, lastRound=null, lastRoster=null;
 
 var ME=(function(){
   var v=null;
@@ -622,7 +622,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-stage]');
   if(!b)return;
   var s=b.getAttribute('data-stage');
-  if(s==='home'){stopPoll();code=null;state=null;lastStatus=null;}
+  if(s==='home'){stopPoll();code=null;state=null;lastStatus=null;lastRoster=null;}
   stage(s);
 });
 
@@ -742,12 +742,19 @@ function apply(s){
       doctor:s.settings.doctor,detective:s.settings.detective});
     $('lob-n').textContent=s.joined;
     $('lob-t').textContent=s.size;
-    var h='';
-    s.players.forEach(function(p){
-      h+='<span class="tag'+(p.me?' me':'')+'">'+esc(p.name)+'</span>';
-    });
-    for(var i=s.joined;i<s.size;i++)h+='<span class="tag empty">empty</span>';
-    $('lob-who').innerHTML=h;
+    // Rebuilding this every poll re-triggers the animation, so only touch it
+    // when the roster actually changed.
+    var sig=s.joined+'/'+s.size+':'+s.players.map(function(p){
+      return (p.me?'*':'')+p.name;}).join('|');
+    if(sig!==lastRoster){
+      var h='';
+      s.players.forEach(function(p){
+        h+='<span class="tag'+(p.me?' me':'')+'">'+esc(p.name)+'</span>';
+      });
+      for(var i=s.joined;i<s.size;i++)h+='<span class="tag empty">empty</span>';
+      $('lob-who').innerHTML=h;
+      lastRoster=sig;
+    }
     $('start').hidden=!s.isHost;
     $('wait-note').hidden=s.isHost;
     if(s.isHost){
