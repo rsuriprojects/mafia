@@ -153,7 +153,8 @@ h2.head span{color:var(--brass)}
 .field input::placeholder{color:#3d465e}
 .field input:focus{outline:none;border-color:var(--brass)}
 .field + .field{margin-top:14px}
-#in-code{text-transform:uppercase;letter-spacing:.18em}
+#in-code,#want-code{text-transform:uppercase;letter-spacing:.18em}
+#want-code::placeholder{text-transform:none;letter-spacing:.04em;font-size:14px}
 
 /* code + lobby */
 .codebox{text-align:center}
@@ -321,7 +322,7 @@ h2.head span{color:var(--brass)}
     <div class="panel" style="margin-top:14px">
       <div class="field">
         <label for="in-code">Join with a code</label>
-        <input id="in-code" maxlength="4" placeholder="••••" autocomplete="off"
+        <input id="in-code" maxlength="6" placeholder="code" autocomplete="off"
                autocapitalize="characters" spellcheck="false">
       </div>
       <div class="stack">
@@ -372,6 +373,16 @@ h2.head span{color:var(--brass)}
         <div class="panel">
           <span class="eyebrow">The deck</span>
           <div class="chips" id="preview"></div>
+        </div>
+        <div class="panel">
+          <span class="eyebrow">Code</span>
+          <div class="field">
+            <input id="want-code" maxlength="6" placeholder="leave blank for random"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false">
+          </div>
+          <p class="prose" style="margin-top:10px;font-size:13px">
+            3 to 6 letters or numbers, if you'd rather pick something easy to say out loud.
+          </p>
           <div class="note" id="setup-note"></div>
         </div>
         <div class="stack">
@@ -591,7 +602,7 @@ var ROLES={
 };
 
 var cfg={size:8,mafia:2,doctor:true,detective:true};
-var code=null, state=null, poll=null, lastStatus=null, lastRound=null, lastRoster=null;
+var code=null, state=null, poll=null, lastStatus=null, lastRound=null, lastRoster=null, lastRole=null;
 
 var ME=(function(){
   var v=null;
@@ -626,7 +637,7 @@ document.addEventListener('click',function(e){
   var b=e.target.closest('[data-stage]');
   if(!b)return;
   var s=b.getAttribute('data-stage');
-  if(s==='home'){stopPoll();code=null;state=null;lastStatus=null;lastRoster=null;}
+  if(s==='home'){stopPoll();code=null;state=null;lastStatus=null;lastRoster=null;lastRole=null;lastRound=null;}
   stage(s);
 });
 
@@ -706,7 +717,8 @@ $('go-setup').addEventListener('click',function(){
 });
 $('create').addEventListener('click',function(){
   var btn=this;btn.disabled=true;
-  api('create',{size:cfg.size,mafia:cfg.mafia,doctor:cfg.doctor,detective:cfg.detective})
+  api('create',{size:cfg.size,mafia:cfg.mafia,doctor:cfg.doctor,detective:cfg.detective,
+                 wanted:$('want-code').value.toUpperCase().replace(/[^A-Z0-9]/g,'')})
     .then(function(s){
       code=s.code;
       return api('join',{code:code,name:myName()});
@@ -718,7 +730,7 @@ $('create').addEventListener('click',function(){
 $('go-join').addEventListener('click',function(){
   var c=$('in-code').value.toUpperCase().replace(/[^0-9A-Z]/g,'');
   if(!myName()){note('home-note','Put your name in first.');return;}
-  if(c.length<4){note('home-note','That code is too short.');return;}
+  if(c.length<3){note('home-note','That code is too short.');return;}
   var btn=this;btn.disabled=true;
   api('join',{code:c,name:myName()})
     .then(function(s){code=c;note('home-note','');apply(s);startPoll();})
@@ -771,7 +783,10 @@ function apply(s){
   }
 
   if(s.status==='playing'){
-    if(lastStatus!=='playing'||lastRound!==s.round)renderCard(s);
+    // A guest polling every couple of seconds can miss the 'ended' state entirely
+    // if the host redeals quickly, so compare the round and the role itself.
+    var role=s.me&&s.me.role;
+    if(lastStatus!=='playing'||lastRound!==s.round||lastRole!==role)renderCard(s);
     stage('card');
   }
 
@@ -781,6 +796,7 @@ function apply(s){
   }
   lastStatus=s.status;
   lastRound=s.round;
+  lastRole=s.me&&s.me.role;
 }
 function esc(t){return String(t).replace(/[&<>"]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
@@ -921,7 +937,7 @@ holdToOpen($('sheet-hold'),function(){sheetEl.classList.add('show');},
   }catch(e){}
   paint();
   var hash=location.hash.replace('#','').trim().toUpperCase().replace(/[^0-9A-Z]/g,'');
-  if(hash.length===4)$('in-code').value=hash;
+  if(hash.length>=3&&hash.length<=6)$('in-code').value=hash;
   stage('home');
 })();
 })();
