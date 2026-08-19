@@ -271,6 +271,24 @@ h2.head span{color:var(--brass)}
 .lb-row .el{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--brass);min-width:56px;text-align:right}
 .empty-state{text-align:center;color:var(--fog);font-size:14.5px;padding:24px 0}
 
+.acc{background:var(--slate);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.acc-h{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:18px 20px;background:none;border:none;cursor:pointer;text-align:left;
+  color:var(--bone);font-family:'JetBrains Mono',monospace;font-size:12px;
+  letter-spacing:.16em;text-transform:uppercase;transition:color .15s;
+}
+/* hover reads as bone, open reads as brass, so only one section ever looks open */
+@media(hover:hover){.acc-h:hover{color:var(--bone)}}
+.acc-h[aria-expanded="true"]{color:var(--brass)}
+@media(hover:hover){.acc-h[aria-expanded="true"]:hover{color:var(--brass)}}
+.acc-h i{
+  width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;
+  transform:rotate(45deg);margin-top:-4px;flex-shrink:0;transition:transform .25s;
+}
+.acc-h[aria-expanded="true"] i{transform:rotate(-135deg);margin-top:2px}
+.acc-b{display:none;padding:0 20px 20px}
+.acc-h[aria-expanded="true"] + .acc-b{display:block}
 .blur{filter:blur(9px);transition:filter .2s;pointer-events:none}
 .blur.show{filter:none}
 
@@ -509,86 +527,93 @@ h2.head span{color:var(--brass)}
 <!-- ==================== RULES ==================== -->
 <div class="view" id="v-rules">
   <h2 class="head">How it <span>goes</span></h2>
-  <p class="sub-line">For whoever's narrating</p>
-  <div class="panel">
-    <span class="eyebrow">Night script</span>
-    <p class="prose">
-      Everyone close your eyes.<br>
-      Mafia, open your eyes and agree on one person.<br>
-      Mafia, close your eyes.<br>
-      Doctor, open your eyes and point to who you're saving.<br>
-      Doctor, close your eyes.<br>
-      Detective, open your eyes and point to who you're checking — I'll nod for mafia,
-      shake for a villager.<br>
-      Detective, close your eyes. Everyone, open your eyes.
-    </p>
+  <p class="sub-line">Tap a section</p>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="true">Setting up<i></i></button>
+    <div class="acc-b">
+      <p class="prose">
+        One person is the narrator and doesn't play. Everyone else gets a card.
+        Roughly one mafia per four players keeps it fair.<br><br>
+        On the very first night the narrator wakes the mafia so they can see who
+        they're working with. Nobody else ever learns anything for free.
+      </p>
+    </div>
   </div>
-  <div class="panel">
-    <span class="eyebrow">The shape of a game</span>
-    <p class="prose">
-      Everyone gets a secret card. The mafia know each other; nobody else knows anything.
-      The game then alternates between night and day until one side is gone.<br><br>
-      <b>Night.</b> Everyone shuts their eyes. The narrator wakes each role in turn — mafia
-      choose a target, doctor chooses someone to protect, detective chooses someone to
-      check. All of it happens silently, by pointing.<br><br>
-      <b>Day.</b> Everyone opens their eyes and the narrator says who died, or that
-      nobody did. Then the table talks it out and votes. Whoever gets the most votes is
-      out and flips their card face up. Then night falls again.
-    </p>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="false">Night<i></i></button>
+    <div class="acc-b">
+      <p class="prose">
+        Everyone shuts their eyes. The narrator wakes each role one at a time, so
+        nobody hears two sets of movement at once.<br><br>
+        Mafia go first and silently agree on one person — they have to point at the
+        same target. Then the doctor picks someone to protect, then the detective
+        picks someone to check.<br><br>
+        Nobody speaks at night, including the mafia. Everything is pointing and
+        nodding. A whisper tells the whole table where you're sitting.
+      </p>
+    </div>
   </div>
-  <div class="panel">
-    <span class="eyebrow">The roles</span>
-    <div class="line"><span class="nm">Mafia</span><span class="rl mafia">Kills at night</span></div>
-    <p class="prose" style="margin:8px 0 16px">
-      You wake with the other mafia and agree on one person to eliminate. During the day
-      you vote and argue like everyone else — the whole job is not looking like mafia.
-      Defending each other too hard is the usual tell.
-    </p>
-    <div class="line"><span class="nm">Doctor</span><span class="rl doctor">Saves at night</span></div>
-    <p class="prose" style="margin:8px 0 16px">
-      Each night you point at one person. If the mafia went for them, they survive and the
-      narrator announces nobody died. You may save yourself, though most tables limit that
-      to once per game. Saying you're the doctor out loud usually gets you killed that night.
-    </p>
-    <div class="line"><span class="nm">Detective</span><span class="rl detective">Checks at night</span></div>
-    <p class="prose" style="margin:8px 0 16px">
-      Each night you point at one person and the narrator nods for mafia, shakes for a villager.
-      The hard part is spending what you learn — claim too early and the mafia kill you,
-      too late and nobody believes you.
-    </p>
-    <div class="line"><span class="nm">Villager</span><span class="rl">Votes by day</span></div>
-    <p class="prose" style="margin:8px 0 0">
-      No night power, and the most underrated card at the table. You have nothing to hide,
-      so you can push hard, ask the questions nobody else can afford to ask, and pressure
-      people into slipping.
-    </p>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="false">Day<i></i></button>
+    <div class="acc-b">
+      <p class="prose">
+        Eyes open. The narrator says who died — or that everyone made it, if the
+        doctor got there first. The dead player reveals what they were and is out.<br><br>
+        Everyone left argues it out. Anyone can accuse anyone; the accused gets a
+        chance to defend themselves before the vote.<br><br>
+        A player is eliminated on a majority. They say what they were — or flip
+        their card, whichever your group prefers.<br><br>
+        Once the vote lands, talking stops immediately. No last words, no reactions,
+        no arguing the result. Everything said after a flip is information the mafia
+        can use, and it's the fastest way to wreck a game.
+      </p>
+    </div>
   </div>
-  <div class="panel">
-    <span class="eyebrow">Winning</span>
-    <p class="prose">
-      <b>The villagers win</b> the moment the last mafia is voted out or killed.<br>
-      <b>Mafia win</b> the moment they equal the number of villagers left — at two mafia and two
-      villagers, the mafia can always force the vote, so the game is over.<br><br>
-      The host calls it on the results screen and everyone's rating updates at once.
-    </p>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="false">The roles<i></i></button>
+    <div class="acc-b">
+      <div class="line"><span class="nm">Mafia</span><span class="rl mafia">Picks who dies</span></div>
+      <div class="line"><span class="nm">Doctor</span><span class="rl doctor">Picks who to save</span></div>
+      <div class="line"><span class="nm">Detective</span><span class="rl detective">Learns if someone's mafia</span></div>
+      <div class="line"><span class="nm">Villager</span><span class="rl">Just votes</span></div>
+      <p class="prose" style="margin-top:14px">
+        The doctor may save themselves — agree beforehand whether that's once or
+        every night. The detective gets a nod for mafia, a shake for a villager.
+      </p>
+    </div>
   </div>
-  <div class="panel">
-    <span class="eyebrow">House rules worth agreeing on first</span>
-    <p class="prose">
-      Can the doctor save themselves, and how often? Do eliminated players stay silent,
-      or can they talk once they're out (silent is better)? Does a tied vote mean nobody
-      dies, or a runoff? Is there a time limit on the day discussion? Settle these before
-      the first night, not in the middle of an argument.
-    </p>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="false">Winning<i></i></button>
+    <div class="acc-b">
+      <p class="prose">
+        Villagers win when the last mafia is out.<br><br>
+        Mafia win the moment they equal the number of villagers left — at two and
+        two they can always force the vote, so it's over there and then.
+      </p>
+    </div>
   </div>
-  <div class="panel">
-    <span class="eyebrow">If you're narrating</span>
-    <p class="prose">
-      Keep your voice flat — the same tone whether the doctor saved someone or not. Don't
-      react to what you see with your eyes open. Give the same pause for every role, even
-      ones nobody is playing, so the table can't count seconds. And use the moderator sheet
-      on your card screen rather than trying to remember who's who.
-    </p>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="false">Night script<i></i></button>
+    <div class="acc-b">
+      <p class="prose" id="script"></p>
+    </div>
+  </div>
+
+  <div class="acc">
+    <button class="acc-h" aria-expanded="false">Narrator tips<i></i></button>
+    <div class="acc-b">
+      <p class="prose">
+        Same tone every time, whether the doctor saved someone or not. Same pause for
+        every role, even ones nobody is playing. Never react to what you see.<br><br>
+        Use the moderator sheet on your card screen instead of trying to remember.
+      </p>
+    </div>
   </div>
 </div>
 
@@ -631,6 +656,26 @@ function tab(name){
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
   $('v-'+name).classList.add('on');
   if(name==='board')loadBoard();
+  if(name==='rules')writeScript();
+}
+
+// The script should only wake roles that are actually in this game.
+document.querySelectorAll('.acc-h').forEach(function(h){
+  h.addEventListener('click',function(){
+    var open=h.getAttribute('aria-expanded')==='true';
+    document.querySelectorAll('.acc-h').forEach(function(o){o.setAttribute('aria-expanded','false');});
+    h.setAttribute('aria-expanded',String(!open));
+  });
+});
+
+function writeScript(){
+  var st=(state&&state.settings)||cfg;
+  var l=['Everyone close your eyes.',
+         'Mafia, open your eyes and agree on someone. Mafia, close your eyes.'];
+  if(st.doctor)l.push("Doctor, open your eyes and point to who you're saving. Doctor, close your eyes.");
+  if(st.detective)l.push("Detective, open your eyes and point to who you're checking \u2014 I'll nod for mafia, shake for a villager. Detective, close your eyes.");
+  l.push('Everyone, open your eyes.');
+  $('script').innerHTML=l.join('<br>');
 }
 document.querySelectorAll('.tabs button').forEach(function(b){
   b.addEventListener('click',function(){tab(b.getAttribute('data-tab'));});
@@ -945,6 +990,7 @@ holdToOpen($('sheet-hold'),function(){sheetEl.classList.add('show');},
     if(n)$('in-name').value=n;
   }catch(e){}
   paint();
+  writeScript();
   var hash=location.hash.replace('#','').trim().toUpperCase().replace(/[^0-9A-Z]/g,'');
   if(hash.length>=3&&hash.length<=6)$('in-code').value=hash;
   stage('home');
