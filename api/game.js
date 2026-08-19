@@ -134,6 +134,7 @@ function view(g, client) {
     size: g.size,
     settings: { mafia: g.mafia, doctor: g.doctor, detective: g.detective },
     status: g.status,
+    round: g.round || 1,
     isHost: g.host === client,
     joined: roster.length,
     players: roster.map((p) => ({ name: p.name, idx: p.idx, me: p.id === client })),
@@ -192,13 +193,23 @@ export default async function handler(req, res) {
       if (mafia + (s.doctor ? 1 : 0) + (s.detective ? 1 : 0) > size)
         return res.status(400).json({ error: 'More special roles than players.' });
 
-      const c = await freshCode();
+      const c = String(b.wanted || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      let final;
+      if (c) {
+        if (c.length < 3 || c.length > 6)
+          return res.status(400).json({ error: 'A custom code needs 3 to 6 letters or numbers.' });
+        if (Number(await redis(['EXISTS', gk(c)])))
+          return res.status(409).json({ error: 'That code is already in use. Pick another.' });
+        final = c;
+      } else {
+        final = await freshCode();
+      }
       const g = {
-        code: c, host: client, status: 'lobby',
+        code: final, host: client, status: 'lobby',
         size, mafia, doctor: s.doctor, detective: s.detective,
         deck: makeDeck(s), players: {}, round: 1,
       };
-      await putGame(c, g);
+      await putGame(final, g);
       return res.status(200).json(view(g, client));
     }
 
