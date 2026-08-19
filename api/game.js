@@ -4,7 +4,8 @@
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || '';
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || '';
 
-const TTL = 43200;          // games live 12 hours
+const TTL = 43200;          // a running game lives 12 hours
+const LOBBY_TTL = 3600;     // a lobby nobody starts frees its code after an hour
 const ELO_KEY = 'nf:elo';
 const START = 1200;
 const K = 20;      // pot size per head on the smaller side
@@ -28,7 +29,8 @@ async function getGame(code) {
   return raw ? JSON.parse(raw) : null;
 }
 async function putGame(code, g) {
-  await redis(['SET', gk(code), JSON.stringify(g), 'EX', String(TTL)]);
+  const life = g.status === 'lobby' ? LOBBY_TTL : TTL;
+  await redis(['SET', gk(code), JSON.stringify(g), 'EX', String(life)]);
 }
 
 /* ---------- deck ---------- */
@@ -231,8 +233,17 @@ export default async function handler(req, res) {
       if (c) {
         if (c.length < 3 || c.length > 6)
           return res.status(400).json({ error: 'A custom code needs 3 to 6 letters or numbers.' });
-        if (Number(await redis(['EXISTS', gk(c)])))
-          return res.status(409).json({ error: 'That code is already in use. Pick another.' });
+        const old = await getGame(c);
+        // Closing a tab tells us nothing, so a code can look taken when the game
+        // behind it is abandoned. Take it back if it's yours, if nobody ever
+        // joined, or if that game already finished.
+        const reclaimable =
+          !old ||
+          old.host === client ||
+          old.status === 'ended' ||
+          Object.keys(old.players || {}).length === 0;
+        if (!reclaimable)
+          return res.status(409).json({ error: 'A game is running on that code right now.' });
         final = c;
       } else {
         final = await freshCode();
@@ -251,7 +262,7 @@ export default async function handler(req, res) {
     if (action === 'join') {
       const name = String(b.name || '').trim().slice(0, 18);
       if (!name) return res.status(400).json({ error: 'Pick a name first.' });
-      const raw = await redis(['EVAL', JOIN_LUA, '1', gk(code), client, name, String(TTL)]);
+      const raw = await redis(['EVAL', JOIN_LUA, '1', gk(code), client, name, String(LOBBY_TTL)]);
       const r = typeof raw === 'string' ? JSON.parse(raw) : raw;
       if (r.error === 'nogame') return res.status(404).json({ error: 'No game with that code.' });
       if (r.error === 'full') return res.status(409).json({ error: 'That game is already full.' });
