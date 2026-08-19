@@ -321,7 +321,7 @@ h2.head span{color:var(--brass)}
     <div class="panel" style="margin-top:14px">
       <div class="field">
         <label for="in-code">Join with a code</label>
-        <input id="in-code" maxlength="6" placeholder="••••••" autocomplete="off"
+        <input id="in-code" maxlength="4" placeholder="••••" autocomplete="off"
                autocapitalize="characters" spellcheck="false">
       </div>
       <div class="stack">
@@ -611,12 +611,14 @@ function tab(name){
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
   $('v-'+name).classList.add('on');
   if(name==='board')loadBoard();
-  window.scrollTo(0,0);
 }
 document.querySelectorAll('.tabs button').forEach(function(b){
   b.addEventListener('click',function(){tab(b.getAttribute('data-tab'));});
 });
+var shownStage=null;
 function stage(id){
+  if(shownStage===id)return;   // polling re-renders constantly; don't yank the scroll
+  shownStage=id;
   document.querySelectorAll('#v-play .stage').forEach(function(s){s.hidden=(s.id!=='st-'+id);});
   window.scrollTo(0,0);
 }
@@ -716,7 +718,7 @@ $('create').addEventListener('click',function(){
 $('go-join').addEventListener('click',function(){
   var c=$('in-code').value.toUpperCase().replace(/[^0-9A-Z]/g,'');
   if(!myName()){note('home-note','Put your name in first.');return;}
-  if(c.length<6){note('home-note','That code is too short.');return;}
+  if(c.length<4){note('home-note','That code is too short.');return;}
   var btn=this;btn.disabled=true;
   api('join',{code:c,name:myName()})
     .then(function(s){code=c;note('home-note','');apply(s);startPoll();})
@@ -919,7 +921,7 @@ holdToOpen($('sheet-hold'),function(){sheetEl.classList.add('show');},
   }catch(e){}
   paint();
   var hash=location.hash.replace('#','').trim().toUpperCase().replace(/[^0-9A-Z]/g,'');
-  if(hash.length===6)$('in-code').value=hash;
+  if(hash.length===4)$('in-code').value=hash;
   stage('home');
 })();
 })();
