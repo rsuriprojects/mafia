@@ -7,7 +7,8 @@ const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TO
 const TTL = 43200;          // games live 12 hours
 const ELO_KEY = 'nf:elo';
 const START = 1200;
-const K = 24;
+const K = 20;      // pot size per head on the smaller side
+const CAP = 40;    // most any one player can move in a single game
 
 async function redis(args) {
   const r = await fetch(URL_, {
@@ -87,35 +88,67 @@ async function readElo(names) {
 }
 function expected(a, b) { return 1 / (1 + Math.pow(10, (b - a) / 400)); }
 
+// Mafia and villagers do not win equally often, and that has nothing to do with
+// skill — it is baked into how many mafia are in the deck. Two mafia in eight is
+// roughly even; one in eight is a slaughter for the villagers. So before comparing
+// ratings we give the mafia side a handicap for the deck they were dealt, and
+// judge each side against what that deck says they should have managed.
+function baselineMafiaWinRate(mafia, total) {
+  const r = mafia / total;
+  return Math.min(0.75, Math.max(0.25, 0.5 + 2 * (r - 0.25)));
+}
+
 async function applyElo(roster, winner) {
   const names = roster.map((p) => p.name);
   const cur = await readElo(names);
 
   const mafia = roster.filter((p) => p.role === 'mafia');
   const town = roster.filter((p) => p.role !== 'mafia');
+  const m = mafia.length, t = town.length;
+  if (!m || !t) return [];
+
   const avg = (list) =>
-    list.length ? list.reduce((s, p) => s + cur[p.name.toLowerCase()].r, 0) / list.length : START;
-
+    list.reduce((s, p) => s + cur[p.name.toLowerCase()].r, 0) / list.length;
   const mAvg = avg(mafia), tAvg = avg(town);
-  const eTown = expected(tAvg, mAvg);
-  const sTown = winner === 'town' ? 1 : 0;
 
-  // Smaller side swings a little harder, which keeps a 2-vs-6 win meaningful.
-  const scale = (side, other) =>
-    Math.min(1.6, Math.max(0.6, other.length / Math.max(1, side.length) / 2 + 0.5));
+  const p = baselineMafiaWinRate(m, roster.length);
+  const handicap = -400 * Math.log10(1 / p - 1);          // in rating points
+  const eMafia = expected(mAvg + handicap, tAvg);
+  const sMafia = winner === 'mafia' ? 1 : 0;
+
+  // One pot, split between the sides. Whatever one side gains, the other loses —
+  // no points appear from nowhere. The pot scales with the smaller side, so a
+  // two-against-six win is worth more per head to the two than to the six.
+  const pot = K * Math.min(m, t) * (sMafia - eMafia);
+
+  const raw = roster.map((pl) => ({
+    name: pl.name,
+    role: pl.role,
+    d: pl.role === 'mafia' ? pot / m : -pot / t,
+  }));
+
+  // Keep any single swing sane without breaking the balance: if one is over the
+  // cap, scale everyone by the same factor.
+  const biggest = Math.max(...raw.map((x) => Math.abs(x.d)));
+  const squeeze = biggest > CAP ? CAP / biggest : 1;
+
+  // Rounding can lose or invent a point; hand the difference to the largest mover.
+  const rounded = raw.map((x) => Object.assign({}, x, { d: Math.round(x.d * squeeze) }));
+  const drift = rounded.reduce((s, x) => s + x.d, 0);
+  if (drift !== 0) {
+    let big = 0;
+    rounded.forEach((x, i) => { if (Math.abs(x.d) > Math.abs(rounded[big].d)) big = i; });
+    rounded[big].d -= drift;
+  }
 
   const deltas = [];
   const writes = [];
-  for (const p of roster) {
-    const key = p.name.toLowerCase();
+  for (const x of rounded) {
+    const key = x.name.toLowerCase();
     const rec = cur[key];
-    const onTown = p.role !== 'mafia';
-    const exp = onTown ? eTown : 1 - eTown;
-    const score = onTown ? sTown : 1 - sTown;
-    const mult = onTown ? scale(town, mafia) : scale(mafia, town);
-    const d = Math.round(K * mult * (score - exp));
-    const next = { name: p.name, r: rec.r + d, g: rec.g + 1, w: rec.w + (score === 1 ? 1 : 0) };
-    deltas.push({ name: p.name, role: p.role, before: rec.r, after: next.r, delta: d });
+    const won = (x.role === 'mafia') === (winner === 'mafia');
+    const next = { name: x.name, r: rec.r + x.d, g: rec.g + 1, w: rec.w + (won ? 1 : 0) };
+    deltas.push({ name: x.name, role: x.role, before: rec.r, after: next.r, delta: x.d });
     writes.push(key, JSON.stringify(next));
   }
   if (writes.length) await redis(['HSET', ELO_KEY, ...writes]);
