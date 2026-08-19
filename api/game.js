@@ -43,11 +43,15 @@ function makeDeck(s) {
   }
   return d;
 }
-function code6() {
-  const AB = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let s = '';
-  for (let i = 0; i < 6; i++) s += AB[Math.floor(Math.random() * AB.length)];
-  return s;
+async function freshCode() {
+  const AB = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';   // no I, O, 0 or 1 to mishear
+  for (let tries = 0; tries < 12; tries++) {
+    let s = '';
+    for (let i = 0; i < 4; i++) s += AB[Math.floor(Math.random() * AB.length)];
+    const taken = await redis(['EXISTS', gk(s)]);
+    if (!Number(taken)) return s;
+  }
+  throw new Error('Could not find a free code, try again.');
 }
 
 /* ---------- atomic join ---------- */
@@ -188,7 +192,7 @@ export default async function handler(req, res) {
       if (mafia + (s.doctor ? 1 : 0) + (s.detective ? 1 : 0) > size)
         return res.status(400).json({ error: 'More special roles than players.' });
 
-      const c = code6();
+      const c = await freshCode();
       const g = {
         code: c, host: client, status: 'lobby',
         size, mafia, doctor: s.doctor, detective: s.detective,
